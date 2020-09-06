@@ -3,6 +3,8 @@
 #include <string.h>
 
 void insertar(int d, char *N);
+void eliminarI();
+void eliminarF();
 
 
 void mostrar();
@@ -27,7 +29,8 @@ int main() {
         printf("Selecciona una opcion: \n");
         printf("1. Mostrar elementos de la lista \n");
         printf("2. Insertar un elemento al inicio de la lista \n");
-        printf("3. Insertar un elemento al final de la lista\n");
+        printf("3. Eliminar el inicio\n");
+        printf("4. Eliminar el final\n");
         printf("0. Salir\n");
         printf("Opcion: ");
         scanf("%d", &op);
@@ -45,6 +48,10 @@ int main() {
                 insertar(tiempo, nombre);
                 break;
             case 3:
+                eliminarI();
+                break;
+            case 4:
+                eliminarF();
                 break;
             case 0:
                 printf("Bonito día\n");
@@ -90,6 +97,41 @@ void mostrar() {
 
         printf("\n");
     }
-
 }
 
+void eliminarI(){
+    Nodo *aux;
+    if(inicio==NULL)
+        printf("Lista vacia\n");
+    else{
+        if(inicio==final){
+            free(inicio);
+            inicio = final = NULL;
+        } else{
+            aux = inicio;
+            inicio = inicio -> sig;
+            final -> sig = inicio;
+            free(aux);
+        }
+    }
+}
+
+void eliminarF(){
+    Nodo *aux, *aux2;
+    if(inicio==NULL)
+        printf("Lista vacia\n");
+    else{
+        if(inicio==final){
+            free(inicio);
+            inicio = final = NULL;
+        } else{
+            aux = final;
+            aux2 = inicio;
+            while (aux2->sig != final)
+                aux2 = aux2 -> sig;
+            aux2 -> sig = inicio;
+            final = aux2;
+            free(aux);
+        }
+    }
+}
