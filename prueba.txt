@@ -1,0 +1,7 @@
+pedidoA 230
+pedido 56
+alim1 67
+alim2 710
+alim3 2
+prod1 45
+prod2 542
