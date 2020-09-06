@@ -1,23 +1,26 @@
 #include <stdio.h>
 #include <malloc.h>
+#include <string.h>
 
-void insertarAlInicio(int d);
+void insertar(int d, char *N);
 
-void insertarAlFinal(int d);
 
 void mostrar();
 
 //Definimos nuestros Nodos
 typedef struct nodo {
-    int dato;
+    int tiempo;
+    char nombre[100];
     struct nodo *sig;
 } Nodo;
 
 //declarar el inicio de la lista
 Nodo * inicio = NULL;  //lista vacia
+Nodo * final = NULL;   //lista vacia
 
 int main() {
-    int op, dato, kk;
+    int op, tiempo;
+    char nombre[100];
 
     printf("Programa que inserta datos en una lista ligada\n");
     do {
@@ -28,19 +31,20 @@ int main() {
         printf("0. Salir\n");
         printf("Opcion: ");
         scanf("%d", &op);
+        getchar();
         switch (op) {
             case 1:
                 mostrar();
                 break;
             case 2:
-                printf("Ingrese elemento a incertar al inicio\n");
-                scanf("%d", &dato);
-                insertarAlInicio(dato);
+                printf("Ingrese el nombre\n");
+                fgets( nombre, 100, stdin );
+                nombre[strcspn(nombre, "\n")] = 0; // Busca y elimina el salto de linea
+                printf("Ingrese el tiempo de ejecucion\n");
+                scanf("%d", &tiempo);
+                insertar(tiempo, nombre);
                 break;
             case 3:
-                printf("Ingrese elemento a incertar al final\n");
-                scanf("%d", &dato);
-                insertarAlFinal(dato);
                 break;
             case 0:
                 printf("Bonito día\n");
@@ -53,39 +57,24 @@ int main() {
 }
 
 //Insertar al inicio en la lista ligada
-void insertarAlInicio(int d) {
+void insertar(int d, char *N) {
     //crear el nodo
     Nodo *nv = (Nodo *) malloc(sizeof(Nodo));
-    nv->dato = d;
-    nv->sig = NULL;  //siempre NULL
+    nv->tiempo = d;
+    strcpy(nv->nombre,N);
 
-    //Insertar el nodo al inicio en la lista
-    if (inicio == NULL) { //lista vacia
-        inicio = nv;  // insertamos primer elemento
-    } else {
+
+    //Insertar el nodo al final en la lista
+    if (inicio == NULL) {  //lista vacia
+        nv->sig = nv;
+        inicio = final = nv;  // insertamos primer elemento
+    } else{
         nv->sig = inicio;
-        inicio = nv;  //actualizamos inicio
+        final->sig = nv;  //actualizamos inicio
+        final = nv;
     }
 }
 
-void insertarAlFinal(int d) {
-    //crear el nodo
-    Nodo *nv = (Nodo *) malloc(sizeof(Nodo));
-    nv->dato = d;
-    nv->sig = NULL;  //siempre NULL
-
-    if (inicio == NULL) {  //lista vacia solo se inserta nodo
-        inicio = nv;
-    } else {
-        Nodo *aux;
-        //recorrer la lista hasta el ultimo nodo
-        aux = inicio;
-        while (aux->sig != NULL) {
-            aux = aux->sig;
-        }
-        aux->sig = nv;
-    }
-}
 
 void mostrar() {
     if (inicio == NULL) {  //lista vacia solo se inserta nodo
@@ -94,10 +83,11 @@ void mostrar() {
         Nodo *aux;
         //recorrer la lista hasta el ultimo nodo
         aux = inicio;
-        while (aux != NULL) {
-            printf("%d -> ", aux->dato);
+        do {
+            printf("Proceso: %s, Tiempo: %d, -> ",aux->nombre, aux->tiempo);
             aux = aux->sig;
-        }
+        } while (aux != inicio);
+
         printf("\n");
     }
 
