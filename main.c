@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
+#include "generarArchivoAleatorio.h"
 
 void insertar(int d, char *N);
 
@@ -19,6 +20,8 @@ void eliminarF();
 void mostrar();
 
 void leerArchivo(char *nombreArchivo);
+
+void generarArchivoDeProcesosPorLotes();
 
 //Número máximo de caractéres para la cadena nombre
 #define NOMBRE_MAX 100
@@ -46,6 +49,7 @@ int main() {
         printf("3. Eliminar elemento inicial\n");
         printf("4. Eliminar elemento final\n");
         printf("5. Leer desde archivo\n");
+        printf("6. Generar archivo aleatorio\n");
         printf("0. Salir\n");
         printf("> ");
         scanf("%d", &op);
@@ -75,6 +79,10 @@ int main() {
                 fgets(nombre, NOMBRE_MAX, stdin);
                 nombre[strcspn(nombre, "\n")] = 0;
                 leerArchivo(nombre);
+                break;
+            case 6:
+                printf("Se genero un archivo de procesos");
+                generarArchivoDeProcesosPorLotes();
                 break;
             case 0:
                 printf("Adiós.\n");
