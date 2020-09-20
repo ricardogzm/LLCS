@@ -3,4 +3,4 @@ project(LLCS C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(LLCS main.c generarArchivoAleatorio.c)
+add_executable(LLCS main.c generarArchivoAleatorio.c main.h)

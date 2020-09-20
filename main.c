@@ -1,54 +1,18 @@
-/*
- * Curso: Sistemas Operativos I
- * Integrantes: Juan Pablo Andrade Miron
- *              Ricardo Guzmán García
- *              Edgar Rafael Medina Lozano
- * 8 de septiembre del 2020
- */
-
-#include <stdio.h>
-#include <malloc.h>
-#include <string.h>
-#include "generarArchivoAleatorio.h"
-
-void insertar(int d, char *N);
-
-void eliminarI();
-
-void eliminarF();
-
-void mostrar();
-
-void leerArchivo(char *nombreArchivo);
-
-void generarArchivoDeProcesosPorLotes();
-
-//Número máximo de caractéres para la cadena nombre
-#define NOMBRE_MAX 100
-
-//Definición del nodo que contiene el nombre y tiempo de ejecución
-typedef struct nodo {
-    int tiempo;
-    char nombre[NOMBRE_MAX];
-    struct nodo *sig;
-} Nodo;
-
-//Se declaran apuntadores para el inicio y final de la lista
-Nodo *inicio = NULL;  //lista vacia
-Nodo *final = NULL;   //lista vacia
+#include "main.h"
 
 int main() {
     int op, tiempo;
     char nombre[NOMBRE_MAX];
+    Nodo *inicio = NULL;  //lista vacia
+    Nodo *final = NULL;   //lista vacia
 
     printf("** Programa que inserta datos en una lista ligada. **\n");
     do {
         printf("\nSelecciona una opcion: \n");
         printf("1. Mostrar elementos de la lista \n");
-        printf("2. Insertar un elemento al final\n");
-        printf("3. Eliminar elemento inicial\n");
-        printf("4. Eliminar elemento final\n");
-        printf("5. Leer desde archivo\n");
+        printf("2. Eliminar elemento inicial\n");
+        printf("3. Eliminar elemento final\n");
+        printf("4. Leer desde archivo\n");
         printf("6. Generar archivo aleatorio\n");
         printf("0. Salir\n");
         printf("> ");
@@ -58,27 +22,27 @@ int main() {
 
         switch (op) {
             case 1:
-                mostrar();
+                mostrar(&inicio);
                 break;
+//            case 2:
+//                printf("Ingrese el nombre: ");
+//                fgets(nombre, NOMBRE_MAX, stdin);
+//                nombre[strcspn(nombre, "\n")] = 0; // Busca y elimina el salto de linea
+//                printf("Ingrese el tiempo de ejecución: ");
+//                scanf("%d", &tiempo);
+//                insertar(tiempo, nombre, &inicio, &final);
+//                break;
             case 2:
-                printf("Ingrese el nombre: ");
-                fgets(nombre, NOMBRE_MAX, stdin);
-                nombre[strcspn(nombre, "\n")] = 0; // Busca y elimina el salto de linea
-                printf("Ingrese el tiempo de ejecución: ");
-                scanf("%d", &tiempo);
-                insertar(tiempo, nombre);
+                eliminarI(&inicio, &final);
                 break;
             case 3:
-                eliminarI();
+                eliminarF(&inicio, &final);
                 break;
             case 4:
-                eliminarF();
-                break;
-            case 5:
                 printf("Ingresar nombre de archivo: ");
                 fgets(nombre, NOMBRE_MAX, stdin);
                 nombre[strcspn(nombre, "\n")] = 0;
-                leerArchivo(nombre);
+                leerArchivo(nombre, &inicio, &final);
                 break;
             case 6:
                 printf("Se genero un archivo de procesos");
@@ -96,80 +60,80 @@ int main() {
 }
 
 //Insertar al inicio en la lista ligada
-void insertar(int d, char *N) {
+void insertar(int d, char *N, Nodo **inicio, Nodo **final) {
     //Creación del nodo
     Nodo *nv = (Nodo *) malloc(sizeof(Nodo));
     nv->tiempo = d;
     strcpy(nv->nombre, N);
 
     //Insertar el nodo al final en la lista
-    if (inicio == NULL) {  //lista vacía
+    if (*inicio == NULL) {  //lista vacía
         nv->sig = nv;
-        inicio = final = nv;  // insertamos primer elemento
+        *inicio = *final = nv;  // insertamos primer elemento
     } else {
-        nv->sig = inicio;
-        final->sig = nv;  //actualizamos inicio
-        final = nv;
+        nv->sig = *inicio;
+        (*final)->sig = nv;  //actualizamos inicio
+        *final = nv;
     }
 }
 
-void mostrar() {
-    if (inicio == NULL) {
+void mostrar(Nodo **inicio) {
+    if (*inicio == NULL) {
         printf("Lista vacia\n");
     } else {
         Nodo *aux;
         //Recorrer la lista hasta el último nodo
-        aux = inicio;
+        aux = *inicio;
+
         do {
             printf("Proceso: %s, Tiempo: %d, -> ", aux->nombre, aux->tiempo);
             aux = aux->sig;
-        } while (aux != final);
-        printf("Proceso: %s, Tiempo: %d", aux->nombre, aux->tiempo);
+        } while (aux != *inicio);
 
         printf("\n");
     }
 }
 
 //Función que elimina el nodo inicial
-void eliminarI() {
+void eliminarI(Nodo **inicio, Nodo **final) {
     Nodo *aux;
-    if (inicio == NULL)
+    if (*inicio == NULL)
         printf("Lista vacía.\n");
     else {
-        if (inicio == final) {  //Se libera memoria del único nodo y se restauran apuntadores
-            free(inicio);
-            inicio = final = NULL;
+        if (*inicio == *final) {  //Se libera memoria del único nodo y se restauran apuntadores
+            free(*inicio);
+            *inicio = *final = NULL;
         } else {    //Eliminación del nodo inicial
-            aux = inicio;
-            inicio = inicio->sig;
-            final->sig = inicio;
+            aux = *inicio;
+            *inicio = (*inicio)->sig;
+            (*final)->sig = *inicio;
             free(aux);
         }
     }
 }
 
 //Función que elimina el nodo final
-void eliminarF() {
+void eliminarF(Nodo **inicio, Nodo **final) {
     Nodo *aux, *aux2;
-    if (inicio == NULL)
+    if (*inicio == NULL)
         printf("Lista vacía.\n");
     else {
-        if (inicio == final) {  //Se libera memoria del único nodo y se restauran apuntadores
-            free(inicio);
-            inicio = final = NULL;
+        if (*inicio == *final) {  //Se libera memoria del único nodo y se restauran apuntadores
+            free(*inicio);
+            *inicio = *final = NULL;
         } else {    //Eliminación del nodo final
-            aux = final;
-            aux2 = inicio;
-            while (aux2->sig != final)
+            aux = *final;
+            aux2 = *inicio;
+            while (aux2->sig != *final)
                 aux2 = aux2->sig;
-            aux2->sig = inicio;
-            final = aux2;
+            aux2->sig = *inicio;
+            *final = aux2;
             free(aux);
         }
     }
 }
 
-void leerArchivo(char *nombreArchivo) {
+void leerArchivo(char *nombreArchivo, Nodo **inicio, Nodo **final) {
     FILE *f;
     int tiempo;
     char nombre[NOMBRE_MAX];
@@ -181,13 +145,13 @@ void leerArchivo(char *nombreArchivo) {
     }
 
     //Si lo pudo abrir, borra todos los elementos de la lista ligada
-    while (inicio != NULL) {
-        eliminarI();
+    while (*inicio != NULL) {
+        eliminarI(inicio, final);
     }
 
     //Mientras la cantidad de elementos leídos con éxito sea mayor a 0 seguirá leyendo
     while (fscanf(f, "%s %d", nombre, &tiempo) > 0) {
-        insertar(tiempo, nombre);
+        insertar(tiempo, nombre, inicio, final);
     }
 
     //Cierra el archivo

@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-# define MIN_PROCESOS 2
-# define MAX_PROCESOS 500
-# define MIN_LOTES 1
-# define MAX_LOTES 50
+#include "generarArchivoAleatorio.h"
 
 void generarArchivoDeProcesosPorLotes(){
     FILE *fp;
@@ -14,8 +9,8 @@ void generarArchivoDeProcesosPorLotes(){
     int cantidadProcesosPorLote;
     int contadorProcesos = 0;
 
-    fp = fopen ( "fichero.txt", "r+" );
-
+    fp = fopen ( "fichero.txt", "w" );
+    srand(time(NULL));
     while (contadorProcesos < numeroTotalProcesos){
         cantidadProcesosPorLote = rand () % (MAX_LOTES-MIN_LOTES+1) + MIN_LOTES;
         for (int j = 0; j < cantidadProcesosPorLote && contadorProcesos < numeroTotalProcesos; j++){
