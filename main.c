@@ -28,9 +28,9 @@ int main() {
 //                printf("Ingrese el nombre: ");
 //                fgets(nombre, NOMBRE_MAX, stdin);
 //                nombre[strcspn(nombre, "\n")] = 0; // Busca y elimina el salto de linea
-//                printf("Ingrese el tiempo de ejecución: ");
-//                scanf("%d", &tiempo);
-//                insertar(tiempo, nombre, &inicio, &final);
+//                printf("Ingrese el tiempoDeProc de ejecución: ");
+//                scanf("%d", &tiempoDeProc);
+//                insertar(tiempoDeProc, nombre, &inicio, &final);
 //                break;
             case 2:
                 eliminarI(&inicio, &final);
@@ -60,10 +60,11 @@ int main() {
 }
 
 //Insertar al inicio en la lista ligada
-void insertar(int d, char *N, Nodo **inicio, Nodo **final) {
+void insertar(int d, char *N, int priority, Nodo **inicio, Nodo **final) {
     //Creación del nodo
     Nodo *nv = (Nodo *) malloc(sizeof(Nodo));
-    nv->tiempo = d;
+    nv->tiempoDeProc = d;
+    nv->priority = priority;
     strcpy(nv->nombre, N);
 
     //Insertar el nodo al final en la lista
@@ -86,7 +87,7 @@ void mostrar(Nodo **inicio) {
         aux = *inicio;
 
         do {
-            printf("Proceso: %s, Tiempo: %d, -> ", aux->nombre, aux->tiempo);
+            printf("Proc: %s, TiempProc: %d, Prioridad: %d -> ", aux->nombre, aux->tiempoDeProc, aux->priority);
             aux = aux->sig;
         } while (aux != *inicio);
 
@@ -133,15 +134,15 @@ void eliminarF(Nodo **inicio, Nodo **final) {
     }
 }
 
-void leerArchivo(char *nombreArchivo, Nodo **inicio, Nodo **final) {
+int leerArchivo(char *nombreArchivo, Nodo **inicio, Nodo **final) {
     FILE *f;
-    int tiempo;
+    int tiempo, priority, cursor;
     char nombre[NOMBRE_MAX];
 
     //Si no pudo abrir el archivo no hace nada y se sale del método.
     if ((f = fopen(nombreArchivo, "r")) == NULL) {
         printf("No se pudo abrir el archivo.\n");
-        return;
+        return -1;
     }
 
     //Si lo pudo abrir, borra todos los elementos de la lista ligada
@@ -150,8 +151,8 @@ void leerArchivo(char *nombreArchivo, Nodo **inicio, Nodo **final) {
     }
 
     //Mientras la cantidad de elementos leídos con éxito sea mayor a 0 seguirá leyendo
-    while (fscanf(f, "%s %d", nombre, &tiempo) > 0) {
-        insertar(tiempo, nombre, inicio, final);
+    while (fscanf(f, "%s %d %d", nombre, &tiempo, &priority) > 2) {
+        insertar(tiempo, nombre, priority, inicio, final);
     }
 
     //Cierra el archivo

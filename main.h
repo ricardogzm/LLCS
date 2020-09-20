@@ -14,14 +14,14 @@
 //Número máximo de caractéres para la cadena nombre
 #define NOMBRE_MAX 100
 
-//Definición del nodo que contiene el nombre y tiempo de ejecución
+//Definición del nodo que contiene el nombre y tiempoDeProc de ejecución
 typedef struct nodo {
-    int tiempo;
+    int tiempoDeProc, priority;
     char nombre[NOMBRE_MAX];
     struct nodo *sig;
 } Nodo;
 
-void insertar(int d, char *N, Nodo **inicio, Nodo **final);
+void insertar(int d, char *N, int priority, Nodo **inicio, Nodo **final);
 
 void eliminarI(Nodo **inicio, Nodo **final);
 
@@ -29,6 +29,6 @@ void eliminarF(Nodo **inicio, Nodo **final);
 
 void mostrar(Nodo **inicio);
 
-void leerArchivo(char *nombreArchivo, Nodo **inicio, Nodo **final);
+int leerArchivo(char *nombreArchivo, Nodo **inicio, Nodo **final);
 
 void generarArchivoDeProcesosPorLotes();

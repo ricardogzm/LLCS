@@ -8,6 +8,7 @@ void generarArchivoDeProcesosPorLotes(){
     int tiempoProceso;
     int cantidadProcesosPorLote;
     int contadorProcesos = 0;
+    int priority;
 
     fp = fopen ( "fichero.txt", "w" );
     srand(time(NULL));
@@ -15,10 +16,11 @@ void generarArchivoDeProcesosPorLotes(){
         cantidadProcesosPorLote = rand () % (MAX_LOTES-MIN_LOTES+1) + MIN_LOTES;
         for (int j = 0; j < cantidadProcesosPorLote && contadorProcesos < numeroTotalProcesos; j++){
             tiempoProceso = rand () % (30-1+1) + 1;
-            fprintf(fp,"proceso%d %d \n",contadorProcesos,tiempoProceso);
+            priority = rand () % 6;
+            fprintf(fp,"proceso%d %d %d\n", contadorProcesos, tiempoProceso, priority);
             contadorProcesos ++;
         }
-        fprintf(fp,"\n");
+        fprintf(fp,"#\n");
     }
 
 
