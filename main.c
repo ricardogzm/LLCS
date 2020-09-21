@@ -179,6 +179,8 @@ int leerArchivo(char *nombreArchivo, Nodo **inicio, Nodo **final, int cursor) {
 void despachar(Nodo **inicio, Nodo **final, int *tiempo){
     Nodo *menor, *aux, *aux2;
     menor = aux = *inicio;
+    int tiempodeEntrada, tiempodeSalida, tiempodeEspera;
+    tiempodeEntrada = *tiempo;
     while (*inicio != NULL) {
         do {
             if (aux->sig->priority < menor->priority) {
@@ -188,6 +190,9 @@ void despachar(Nodo **inicio, Nodo **final, int *tiempo){
             aux = aux->sig;
         } while (aux != *inicio);
         //Se elimina el nodo con menor prioridad que haya llegado primero
+        tiempodeEspera = tiempodeEntrada - *tiempo;
+        *tiempo = *tiempo + menor->tiempoDeProc;
+        tiempodeSalida = tiempodeEntrada - *tiempo;
 
         printf("prioridad: %d", menor->priority);
         if(menor == *inicio)
