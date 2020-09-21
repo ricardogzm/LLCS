@@ -1,8 +1,9 @@
 #include "main.h"
 
 int main() {
-    int op, tiempo=0, tiempoEntreLotes=0;
-    int aux,cursor=0;
+    srand(time(NULL));
+    int op, tiempo=0, tiempoEntreLotes;
+    int aux,cursor=0, cursorDespachador=0;
     char nombre[NOMBRE_MAX];
     Nodo *inicio = NULL;  //lista vacia
     Nodo *final = NULL;   //lista vacia
@@ -40,6 +41,7 @@ int main() {
                 eliminarF(&inicio, &final);
                 break;
             case 4:
+                fclose(fopen("data.txt","w"));
                 printf("Ingresar nombre de archivo: ");
                 fgets(nombre, NOMBRE_MAX, stdin);
                 nombre[strcspn(nombre, "\n")] = 0;
@@ -47,19 +49,19 @@ int main() {
                 cursor=leerArchivo(nombre, &inicio, &final, cursor);
                 if (cursor!=-1) {
                     while (1) {
-                        despachar(&inicio, &final, &tiempo);
+                        cursorDespachador = despachar(&inicio, &final, &tiempo, &cursorDespachador);
                         aux=leerArchivo(nombre, &inicio, &final, cursor);
                         if(aux==cursor)
                             break;
                         else
                             cursor=aux;
-                        tiempoEntreLotes = rand () % (30-1+1) + 1;
-                        printf("\nEsperando al siguiente lote...%d segudos\n", tiempoEntreLotes);
+                        tiempoEntreLotes = rand () % (8-1+1) + 1;
+                        printf("\nEsperando al siguiente lote... %d segudos\n", tiempoEntreLotes);
                         tiempo = tiempo + tiempoEntreLotes;
                         sleep(tiempoEntreLotes);
                     }
                 }
-                cursor = tiempo =0;
+                cursor = tiempo = cursorDespachador = 0;
                 break;
             case 6:
                 printf("Se genero un archivo de procesos");
@@ -180,11 +182,14 @@ int leerArchivo(char *nombreArchivo, Nodo **inicio, Nodo **final, int cursor) {
 
 }
 
-void despachar(Nodo **inicio, Nodo **final, int *tiempo){
+int despachar(Nodo **inicio, Nodo **final, int *tiempo, int cursor){
+    FILE *data;
     Nodo *menor, *aux, *aux2;
     menor = aux = *inicio;
-    int tiempodeEntrada, tiempodeSalida, tiempodeEspera;
+    int tiempodeEntrada, tiempodeSalida, tiempodeEspera, puntero;
     tiempodeEntrada = *tiempo;
+    data = fopen ( "data.txt", "a" );
+    fseek(data, cursor, SEEK_SET);
     while (*inicio != NULL) {
         do {
             if (aux->sig->priority < menor->priority) {
@@ -194,11 +199,11 @@ void despachar(Nodo **inicio, Nodo **final, int *tiempo){
             aux = aux->sig;
         } while (aux != *inicio);
         //Se elimina el nodo con menor prioridad que haya llegado primero
-        tiempodeEspera = tiempodeEntrada - *tiempo;
+        tiempodeEspera =  *tiempo - tiempodeEntrada ;
         *tiempo = *tiempo + menor->tiempoDeProc;
-        tiempodeSalida = tiempodeEntrada - *tiempo;
-
-        printf("prioridad: %d", menor->priority);
+        tiempodeSalida = *tiempo;
+        fprintf(data,"%s,%d,%d,%d\n", menor->nombre,tiempodeEntrada,tiempodeEspera,tiempodeSalida);
+        printf("Despachando el proceso: %s prioridad: %d tiempo de CPU: %d\n",menor->nombre ,menor->priority, menor->tiempoDeProc);
         if(menor == *inicio)
             eliminarI(inicio, final);
         else
@@ -215,4 +220,7 @@ void despachar(Nodo **inicio, Nodo **final, int *tiempo){
             }
         aux = menor = *inicio;
     }
+    puntero=ftell(data);
+    fclose(data);//Cierra el archivo
+    return puntero;
 }
