@@ -29,6 +29,8 @@ void eliminarF(Nodo **inicio, Nodo **final);
 
 void mostrar(Nodo **inicio);
 
-int leerArchivo(char *nombreArchivo, Nodo **inicio, Nodo **final);
+int leerArchivo(char *nombreArchivo, Nodo **inicio, Nodo **final, int cursor);
 
 void generarArchivoDeProcesosPorLotes();
+
+void despachar(Nodo **inicio, Nodo **final);

@@ -1,7 +1,8 @@
 #include "main.h"
 
 int main() {
-    int op, tiempo;
+    int op;
+    int cursor=0;
     char nombre[NOMBRE_MAX];
     Nodo *inicio = NULL;  //lista vacia
     Nodo *final = NULL;   //lista vacia
@@ -42,7 +43,7 @@ int main() {
                 printf("Ingresar nombre de archivo: ");
                 fgets(nombre, NOMBRE_MAX, stdin);
                 nombre[strcspn(nombre, "\n")] = 0;
-                leerArchivo(nombre, &inicio, &final);
+                cursor=leerArchivo(nombre, &inicio, &final, cursor);
                 break;
             case 6:
                 printf("Se genero un archivo de procesos");
@@ -134,9 +135,9 @@ void eliminarF(Nodo **inicio, Nodo **final) {
     }
 }
 
-int leerArchivo(char *nombreArchivo, Nodo **inicio, Nodo **final) {
+int leerArchivo(char *nombreArchivo, Nodo **inicio, Nodo **final, int cursor) {
     FILE *f;
-    int tiempo, priority, cursor;
+    int tiempo, priority;
     char nombre[NOMBRE_MAX];
 
     //Si no pudo abrir el archivo no hace nada y se sale del método.
@@ -150,11 +151,17 @@ int leerArchivo(char *nombreArchivo, Nodo **inicio, Nodo **final) {
         eliminarI(inicio, final);
     }
 
+    fseek(f, cursor, SEEK_SET);
+
     //Mientras la cantidad de elementos leídos con éxito sea mayor a 0 seguirá leyendo
     while (fscanf(f, "%s %d %d", nombre, &tiempo, &priority) > 2) {
         insertar(tiempo, nombre, priority, inicio, final);
     }
-
+    return ftell(f);
     //Cierra el archivo
     fclose(f);
+}
+
+void despachar(Nodo **inicio, Nodo **final){
+
 }
