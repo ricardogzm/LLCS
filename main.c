@@ -49,7 +49,7 @@ int main() {
                 cursor=leerArchivo(nombre, &inicio, &final, cursor);
                 if (cursor!=-1) {
                     while (1) {
-                        cursorDespachador = despachar(&inicio, &final, &tiempo, &cursorDespachador);
+                        cursorDespachador = despachar(&inicio, &final, &tiempo, cursorDespachador);
                         aux=leerArchivo(nombre, &inicio, &final, cursor);
                         if(aux==cursor)
                             break;
