@@ -1,8 +1,8 @@
 #include "main.h"
 
 int main() {
-    int op;
-    int cursor=0;
+    int op, tiempo=0;
+    int aux,cursor=0;
     char nombre[NOMBRE_MAX];
     Nodo *inicio = NULL;  //lista vacia
     Nodo *final = NULL;   //lista vacia
@@ -43,7 +43,19 @@ int main() {
                 printf("Ingresar nombre de archivo: ");
                 fgets(nombre, NOMBRE_MAX, stdin);
                 nombre[strcspn(nombre, "\n")] = 0;
+                aux=cursor;
                 cursor=leerArchivo(nombre, &inicio, &final, cursor);
+                if (cursor!=-1) {
+                    while (1) {
+                        despachar(&inicio, &final, &tiempo);
+                        aux=leerArchivo(nombre, &inicio, &final, cursor);
+                        if(aux==cursor)
+                            break;
+                        else
+                            cursor=aux;
+                    }
+                }
+                cursor = tiempo =0;
                 break;
             case 6:
                 printf("Se genero un archivo de procesos");
@@ -137,7 +149,7 @@ void eliminarF(Nodo **inicio, Nodo **final) {
 
 int leerArchivo(char *nombreArchivo, Nodo **inicio, Nodo **final, int cursor) {
     FILE *f;
-    int tiempo, priority;
+    int tiempo, priority, puntero;
     char nombre[NOMBRE_MAX];
 
     //Si no pudo abrir el archivo no hace nada y se sale del método.
@@ -157,11 +169,41 @@ int leerArchivo(char *nombreArchivo, Nodo **inicio, Nodo **final, int cursor) {
     while (fscanf(f, "%s %d %d", nombre, &tiempo, &priority) > 2) {
         insertar(tiempo, nombre, priority, inicio, final);
     }
-    return ftell(f);
-    //Cierra el archivo
-    fclose(f);
+    puntero=ftell(f);
+    fclose(f);//Cierra el archivo
+    return puntero;
+
+
 }
 
-void despachar(Nodo **inicio, Nodo **final){
+void despachar(Nodo **inicio, Nodo **final, int *tiempo){
+    Nodo *menor, *aux, *aux2;
+    menor = aux = *inicio;
+    while (*inicio != NULL) {
+        do {
+            if (aux->sig->priority < menor->priority) {
+                aux2 = aux;
+                menor = aux->sig;
+            }
+            aux = aux->sig;
+        } while (aux != *inicio);
+        //Se elimina el nodo con menor prioridad que haya llegado primero
 
+        printf("prioridad: %d", menor->priority);
+        if(menor == *inicio)
+            eliminarI(inicio, final);
+        else
+            if(menor == *final)
+            eliminarF(inicio, final);
+            else {
+                if (*inicio == *final) {  //Se libera memoria del único nodo y se restauran apuntadores
+                    free(*inicio);
+                    *inicio = *final = NULL;
+                } else {    //Eliminación del nodo menor
+                    aux2->sig = menor->sig;
+                    free(menor);
+                }
+            }
+        aux = menor = *inicio;
+    }
 }

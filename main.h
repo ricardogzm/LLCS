@@ -33,4 +33,4 @@ int leerArchivo(char *nombreArchivo, Nodo **inicio, Nodo **final, int cursor);
 
 void generarArchivoDeProcesosPorLotes();
 
-void despachar(Nodo **inicio, Nodo **final);
+void despachar(Nodo **inicio, Nodo **final, int *tiempo);
