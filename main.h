@@ -10,6 +10,7 @@
 #include <malloc.h>
 #include <string.h>
 #include "generarArchivoAleatorio.h"
+#include <unistd.h>
 
 //Número máximo de caractéres para la cadena nombre
 #define NOMBRE_MAX 100

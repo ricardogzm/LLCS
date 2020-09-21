@@ -1,7 +1,7 @@
 #include "main.h"
 
 int main() {
-    int op, tiempo=0;
+    int op, tiempo=0, tiempoEntreLotes=0;
     int aux,cursor=0;
     char nombre[NOMBRE_MAX];
     Nodo *inicio = NULL;  //lista vacia
@@ -53,6 +53,10 @@ int main() {
                             break;
                         else
                             cursor=aux;
+                        tiempoEntreLotes = rand () % (30-1+1) + 1;
+                        printf("\nEsperando al siguiente lote...%d segudos\n", tiempoEntreLotes);
+                        tiempo = tiempo + tiempoEntreLotes;
+                        sleep(tiempoEntreLotes);
                     }
                 }
                 cursor = tiempo =0;
